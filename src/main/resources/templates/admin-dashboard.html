@@ -1,0 +1,1030 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>SMS | Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --secondary: #6c757d;
+            --success: #10b981;
+            --info: #0ea5e9;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --light: #f8f9fa;
+            --dark: #1f2937;
+            --sidebar-width: 280px;
+            --header-height: 80px;
+            --card-border-radius: 12px;
+            --transition: all 0.3s ease;
+            --bg-color: #f9fafb;
+            --text-color: #374151;
+            --card-bg: #ffffff;
+            --header-bg: #ffffff;
+            --border-color: #e9ecef;
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            --hover-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode {
+            --bg-color: #1a1d21;
+            --text-color: #e9ecef;
+            --card-bg: #24272b;
+            --header-bg: #1a1d21;
+            --border-color: #343a40;
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            --hover-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            transition: var(--transition);
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            height: 100vh;
+            position: fixed;
+            padding: 25px 0;
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            transition: var(--transition);
+        }
+        
+        .sidebar-brand {
+            padding: 0 25px 25px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            margin-bottom: 25px;
+        }
+        
+        .sidebar-brand h3 {
+            font-weight: 700;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .sidebar-brand h3 i {
+            margin-right: 12px;
+            background: rgba(255, 255, 255, 0.15);
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .sidebar-menu {
+            padding: 0 15px;
+        }
+        
+        .sidebar-item {
+            margin-bottom: 8px;
+            border-radius: 10px;
+            transition: var(--transition);
+        }
+        
+        .sidebar-item:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+        
+        .sidebar-link {
+            color: rgba(255, 255, 255, 0.9);
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+        
+        .sidebar-link:hover {
+            color: white;
+            text-decoration: none;
+            transform: translateX(5px);
+        }
+        
+        .sidebar-link.active {
+            background: rgba(255, 255, 255, 0.18);
+            color: white;
+            box-shadow: var(--shadow);
+        }
+        
+        .sidebar-icon {
+            margin-right: 15px;
+            font-size: 20px;
+            width: 24px;
+            text-align: center;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            position: relative;
+            transition: var(--transition);
+        }
+        
+        /* Header */
+        .header {
+            height: var(--header-height);
+            background: var(--header-bg);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+            transition: var(--transition);
+        }
+        
+        .page-title h2 {
+            color: var(--text-color);
+            font-weight: 600;
+            margin: 0;
+            font-size: 24px;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .dark-mode-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .dark-mode-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+        
+        .dark-mode-toggle {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            width: 50px;
+            height: 26px;
+            border-radius: 50px;
+            position: relative;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            padding: 0 3px;
+            transition: var(--transition);
+        }
+        
+        .dark-mode-toggle span {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary);
+            position: absolute;
+            transition: var(--transition);
+            left: 3px;
+        }
+        
+        .dark-mode-toggle.dark span {
+            left: calc(100% - 23px);
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .user-info {
+            text-align: right;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 15px;
+        }
+        
+        .user-role {
+            font-size: 12px;
+            color: var(--secondary);
+        }
+        
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 18px;
+        }
+        
+        .logout-btn {
+            background: var(--danger);
+            color: white;
+            border-radius: 8px;
+            padding: 10px 18px;
+            text-decoration: none;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+            gap: 8px;
+        }
+        
+        .logout-btn:hover {
+            background: #dc2626;
+            color: white;
+            text-decoration: none;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
+        }
+        
+        /* Content Area */
+        .content {
+            padding: 30px;
+        }
+        
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 25px;
+            margin-bottom: 35px;
+        }
+        
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: var(--card-border-radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--hover-shadow);
+        }
+        
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 100%;
+        }
+        
+        .stat-card.students::after {
+            background: var(--primary);
+        }
+        
+        .stat-card.courses::after {
+            background: var(--info);
+        }
+        
+        .stat-card.subjects::after {
+            background: var(--success);
+        }
+        
+        .stat-card.attendance::after {
+            background: var(--warning);
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 18px;
+            font-size: 24px;
+        }
+        
+        .stat-card.students .stat-icon {
+            background: rgba(79, 70, 229, 0.15);
+            color: var(--primary);
+        }
+        
+        .stat-card.courses .stat-icon {
+            background: rgba(14, 165, 233, 0.15);
+            color: var(--info);
+        }
+        
+        .stat-card.subjects .stat-icon {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+        }
+        
+        .stat-card.attendance .stat-icon {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+        }
+        
+        .stat-title {
+            font-size: 15px;
+            color: var(--secondary);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 12px;
+        }
+        
+        .stat-action {
+            display: inline-flex;
+            align-items: center;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+            transition: var(--transition);
+        }
+        
+        .stat-action:hover {
+            color: var(--primary-dark);
+            text-decoration: none;
+        }
+        
+        .stat-action i {
+            margin-left: 8px;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+        
+        .stat-action:hover i {
+            transform: translateX(5px);
+        }
+        
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 35px;
+        }
+        
+        .action-card {
+            background: var(--card-bg);
+            border-radius: var(--card-border-radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
+        }
+        
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
+        }
+        
+        .action-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .action-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-right: 15px;
+        }
+        
+        .attendance-actions .action-icon {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+        }
+        
+        .marks-actions .action-icon {
+            background: rgba(79, 70, 229, 0.15);
+            color: var(--primary);
+        }
+        
+        .action-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-color);
+            margin: 0;
+        }
+        
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+        
+        .action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            border: none;
+            text-align: center;
+        }
+        
+        .action-btn i {
+            margin-right: 8px;
+        }
+        
+        .action-btn.view {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .action-btn.view:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(79, 70, 229, 0.4);
+        }
+        
+        .action-btn.add {
+            background: var(--success);
+            color: white;
+        }
+        
+        .action-btn.add:hover {
+            background: #0da271;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+        }
+        
+        .action-btn.update {
+            background: var(--warning);
+            color: white;
+        }
+        
+        .action-btn.update:hover {
+            background: #d97706;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 158, 11, 0.4);
+        }
+        
+        /* Recent Students */
+        .recent-section {
+            background: var(--card-bg);
+            border-radius: var(--card-border-radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-color);
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title i {
+            margin-right: 10px;
+            color: var(--primary);
+        }
+        
+        .view-all {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            transition: var(--transition);
+        }
+        
+        .view-all:hover {
+            color: var(--primary-dark);
+            text-decoration: none;
+        }
+        
+        .view-all i {
+            margin-left: 8px;
+            font-size: 14px;
+        }
+        
+        /* Student Table */
+        .student-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        
+        .student-table thead th {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            font-weight: 600;
+            padding: 16px;
+            border-bottom: 2px solid var(--border-color);
+            text-align: left;
+        }
+        
+        .student-table tbody td {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+        
+        .student-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .student-table tbody tr {
+            transition: var(--transition);
+        }
+        
+        .student-table tbody tr:hover {
+            background-color: rgba(79, 70, 229, 0.05);
+        }
+        
+        .student-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            margin-right: 12px;
+        }
+        
+        .student-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .student-name {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+        
+        .student-email {
+            color: var(--secondary);
+            font-size: 14px;
+        }
+        
+        .student-id {
+            font-size: 13px;
+            color: var(--secondary);
+            background: rgba(108, 117, 125, 0.1);
+            padding: 4px 10px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        
+        .student-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+        
+        .action-button {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .action-button.view {
+            background: var(--primary);
+        }
+        
+        .action-button.edit {
+            background: var(--warning);
+        }
+        
+        .action-button.delete {
+            background: var(--danger);
+        }
+        
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            color: white;
+        }
+        
+        .table-responsive {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 25px;
+            color: var(--secondary);
+            font-size: 14px;
+            border-top: 1px solid var(--border-color);
+            margin-top: 40px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .sidebar {
+                width: 230px;
+            }
+            
+            .main-content {
+                margin-left: 230px;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 80px;
+                overflow: hidden;
+            }
+            
+            .sidebar-brand h3, .sidebar-link span {
+                display: none;
+            }
+            
+            .sidebar-icon {
+                margin-right: 0;
+                font-size: 22px;
+            }
+            
+            .sidebar-link {
+                justify-content: center;
+                padding: 15px;
+            }
+            
+            .main-content {
+                margin-left: 80px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+            
+            .dark-mode-label {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                padding: 0 20px;
+                flex-wrap: wrap;
+                height: auto;
+                padding: 15px;
+            }
+            
+            .header-actions {
+                order: 3;
+                width: 100%;
+                justify-content: center;
+                margin-top: 15px;
+            }
+            
+            .user-info {
+                display: none;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <h3><i class="fas fa-graduation-cap"></i><span>SMS </span></h3>
+        </div>
+        <div class="sidebar-menu">
+            <div class="sidebar-item">
+                <a href="/admin/dashboard" class="sidebar-link active">
+                    <i class="fas fa-home sidebar-icon"></i>
+                    <span>Dashboard</span>
+                </a>
+            </div>
+            <div class="sidebar-item">
+                <a href="/admin/student/all" class="sidebar-link">
+                    <i class="fas fa-user-graduate sidebar-icon"></i>
+                    <span>Students</span>
+                </a>
+            </div>
+			<div class="sidebar-item">
+                <a href="/admin/departments" class="sidebar-link">
+					<i class="fas fa-building sidebar-icon"></i>
+					<span>Departments</span>
+                </a>
+            </div>
+            <div class="sidebar-item">
+                <a href="/courses" class="sidebar-link">
+                    <i class="fas fa-book sidebar-icon"></i>
+                    <span>Courses</span>
+                </a>
+            </div>
+            <div class="sidebar-item">
+                <a href="/courses/subjects" class="sidebar-link">
+                    <i class="fas fa-bookmark sidebar-icon"></i>
+                    <span>Subjects</span>
+                </a>
+            </div>
+            <div class="sidebar-item">
+                <a href="/admin/marks/view" class="sidebar-link">
+                    <i class="fas fa-chart-line sidebar-icon"></i>
+                    <span>Marks</span>
+                </a>
+            </div>
+            <div class="sidebar-item">
+                <a href="/admin/dashboard/attendance/attendance-management" class="sidebar-link">
+                    <i class="fas fa-calendar-check sidebar-icon"></i>
+                    <span>Attendance</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <div class="page-title">
+                <h2>Admin Dashboard</h2>
+            </div>
+            <div class="user-menu">
+                <div class="header-actions">
+                    <div class="dark-mode-container">
+                        <span class="dark-mode-label">Dark Mode</span>
+                        <div class="dark-mode-toggle" id="darkModeToggle">
+                            <span></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="user-info">
+                    <div class="user-name" th:text="${loggedInUser != null} ? ${loggedInUser} : 'Admin User'">John Doe</div>
+                    <div class="user-role">Administrator</div>
+                </div>
+                <div class="user-avatar" th:text="${loggedInUser != null} ? ${#strings.substring(loggedInUser, 0, 1)} : 'A'">JD</div>
+                <a href="/logout" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content">
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card students">
+                    <div class="stat-icon">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <div class="stat-title">Total Students</div>
+                    <div class="stat-value" th:text="${studentCount}">11</div>
+                    <a href="/admin/student/all" class="stat-action">
+                        Manage Students <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <div class="stat-card courses">
+                    <div class="stat-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div class="stat-title">Total Courses</div>
+                    <div class="stat-value" th:text="${courseCount}">3</div>
+                    <a href="/courses" class="stat-action">
+                        Manage Courses <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <div class="stat-card subjects">
+                    <div class="stat-icon">
+                        <i class="fas fa-bookmark"></i>
+                    </div>
+                    <div class="stat-title">Total Subjects</div>
+                    <div class="stat-value" th:text="${subjectCount}">4</div>
+                    <a href="/courses/subjects" class="stat-action">
+                        Manage Subjects <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+				<div class="stat-card attendance">
+				    <div class="stat-icon">
+				        <i class="fas fa-clipboard-check"></i>
+				    </div>
+				    <div class="stat-title">Today's Attendance</div>
+				    <div class="stat-value" th:text="${#numbers.formatDecimal(todaysAttendance, 1, 0) + '%'}">0%</div>
+				    <a href="/admin/dashboard/attendance/todays-attendance" class="stat-action">
+				        Manage Attendance <i class="fas fa-arrow-right"></i>
+				    </a>
+				</div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <div class="action-card attendance-actions">
+                    <div class="action-header">
+                        <div class="action-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <h4 class="action-title">Attendance Actions</h4>
+                    </div>
+                    <div class="action-buttons">
+                        <a href="/admin/dashboard/attendance/view-attendance?studentId=" class="action-btn view">
+                            <i class="fas fa-eye"></i> View Attendance
+                        </a>
+                        <a href="/admin/dashboard/attendance/mark-attendance" class="action-btn add">
+                            <i class="fas fa-calendar-plus"></i> Mark Attendance
+                        </a>
+                        <a href="/admin/dashboard/attendance/update-attendance" class="action-btn update">
+                            <i class="fas fa-edit"></i> Update Attendance
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="action-card marks-actions">
+                    <div class="action-header">
+                        <div class="action-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h4 class="action-title">Marks Management</h4>
+                    </div>
+                    <div class="action-buttons">
+                        <a href="/admin/marks/view" class="action-btn view">
+                            <i class="fas fa-eye"></i> View Marks
+                        </a>
+                        <a href="/admin/marks/add" class="action-btn add">
+                            <i class="fas fa-pen"></i> Add Marks
+                        </a>
+						<a href="/admin/student/update-marks" class="action-btn update">
+						    <i class="fas fa-edit"></i> Update Marks
+						</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recently Added Students -->
+            <div class="recent-section">
+                <div class="section-header">
+                    <h4 class="section-title"><i class="fas fa-users"></i> Recently Added Students</h4>
+                    <a href="/admin/student/all" class="view-all">
+                        View All <i class="fas fa-chevron-right"></i>
+                    </a>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="student-table">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Email</th>
+                                <th>ID</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="student, status : ${recentStudents}" th:if="${status.index < 5}">
+                                <td>
+                                    <div class="student-info">
+                                        <div class="student-avatar" th:text="${#strings.substring(student.firstName, 0, 1)} + ${#strings.substring(student.lastName, 0, 1)}">VG</div>
+                                        <div>
+                                            <div class="student-name" th:text="${student.firstName} + ' ' + ${student.lastName}">Vivek Gour</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="student-email" th:text="${student.email}">vivek@gmail.com</div>
+                                </td>
+                                <td>
+                                    <span class="student-id" th:text="${student.studentId}">19</span>
+                                </td>
+                                <td>
+                                    <div class="student-actions">
+                                        <a th:href="@{'/admin/student/profile/' + ${student.studentId}}" class="action-button view">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a th:href="@{'/admin/student/update/' + ${student.studentId}}" class="action-button edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a th:href="@{'/admin/student/delete/' + ${student.studentId}}" class="action-button delete">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Footer -->
+            <div class="footer">
+                <p>© 2025 Team 6 - Student Management System</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Dark Mode Toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const body = document.body;
+        
+        // Check for saved dark mode preference
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            body.classList.add('dark-mode');
+            darkModeToggle.classList.add('dark');
+        }
+        
+        darkModeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            darkModeToggle.classList.toggle('dark');
+            
+            // Save preference
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('darkMode', 'enabled');
+            } else {
+                localStorage.setItem('darkMode', 'disabled');
+            }
+        });
+        
+        // Add hover effects to cards
+        const cards = document.querySelectorAll('.stat-card, .action-card');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-8px)';
+                card.style.boxShadow = 'var(--hover-shadow)';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = '';
+                card.style.boxShadow = 'var(--shadow)';
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Student Marks</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f4f6f8;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .container {
+            margin-top: 60px;
+        }
+        h2 {
+            color: #343a40;
+            margin-bottom: 25px;
+            font-weight: 600;
+            text-align: center;
+        }
+        .table {
+            background-color: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+        }
+        td {
+            vertical-align: middle;
+            text-align: center;
+        }
+        .btn-primary, .btn-sm {
+            font-weight: 500;
+        }
+        .btn-submit {
+            background-color: #20c997;
+            color: white;
+            font-weight: 500;
+        }
+        .btn-submit:hover { background-color: #198754; }
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+            padding: 20px;
+            background-color: #fff;
+        }
+        .form-select, .form-control {
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Update Student Marks</h2>
+
+    <div class="card">
+        <div class="card-body">
+            <!-- Select Student -->
+			<!-- Select Student -->
+			<form th:action="@{/admin/student/update-marks}" method="post" class="mb-4 row g-3 align-items-end">
+			    <div class="col-md-6">
+			        <label for="studentId" class="form-label">Select Student</label>
+			        <select name="studentId" class="form-select" required>
+			            <option value="">-- Select Student --</option>
+			            <th:block th:each="sid : ${studentIds}">
+			                <option th:value="${sid}" th:text="${sid}"
+			                        th:selected="${selectedStudent != null and selectedStudent.studentId == sid}"></option>
+			            </th:block>
+			        </select>
+			    </div>
+
+			    <!-- Submit Button -->
+			    <div class="col-md-2">
+			        <button type="submit" class="btn btn-submit w-100">Submit</button>
+			    </div>
+
+			    <!-- Back to Dashboard Button -->
+			    <div class="col-md-2">
+			        <a th:href="@{/admin/dashboard}" class="btn btn-secondary w-100">
+			            <i class="fas fa-arrow-left me-1"></i> Back to Dashboard
+			        </a>
+			    </div>
+			</form>
+            <!-- Show Marks Table -->
+            <div th:if="${marksList != null}" class="table-responsive">
+                <table class="table table-bordered table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Student</th>
+                            <th>Subject</th>
+                            <th>Exam Type</th>
+                            <th>Marks Obtained</th>
+                            <th>Semester</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="mark : ${marksList}">
+                            <td th:text="${mark.studentId}">ID</td>
+                            <td th:text="${selectedStudent.firstName + ' ' + selectedStudent.lastName}">Student Name</td>
+                            <td th:text="${mark.subjectName}">Subject Name</td>
+                            <td th:text="${mark.examType}">Exam Type</td>
+                            <td th:text="${mark.marksObtained}">Marks</td>
+                            <td th:text="${mark.semester}">Semester</td>
+                            <td class="text-nowrap">
+                                <a th:href="@{'/admin/marks/update/' + ${mark.marksId}}" class="btn btn-sm btn-primary me-1 mb-1">
+                                    <i class="fas fa-edit me-1"></i> Edit
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Messages -->
+            <div th:if="${message}" class="alert alert-success mt-3" th:text="${message}"></div>
+            <div th:if="${error}" class="alert alert-danger mt-3" th:text="${error}"></div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

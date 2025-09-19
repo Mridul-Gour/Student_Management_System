@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Marks</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body { background-color: #f8f9fa; font-family: Arial, sans-serif; }
+        .container { margin-top: 50px; }
+        h2 { margin-bottom: 20px; color: #343a40; }
+        table { background-color: #ffffff; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        th { background-color: #007bff; color: white; }
+        .btn-average, .btn-gpa { background-color: #ffc107; color: white; }
+        .btn-average:hover, .btn-gpa:hover { background-color: #e0a800; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>My Marks</h2>
+
+    <div class="mb-3">
+        <button class="btn btn-average me-1" onclick="fetchAllAverages()">Fetch All Averages</button>
+        <button class="btn btn-gpa" onclick="fetchAllGPA()">Fetch All GPA</button>
+    </div>
+
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Subject</th>
+                <th>Exam Type</th>
+                <th>Marks Obtained</th>
+                <th>Semester</th>
+                <th>Average Marks</th>
+                <th>GPA</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="mark : ${marksList}" 
+                th:data-student-id="${mark.studentId}" 
+                th:data-semester="${mark.semester}">
+                <td th:text="${mark.subjectName}">Subject</td>
+                <td th:text="${mark.examType}">Exam Type</td>
+                <td th:text="${mark.marksObtained}">Marks</td>
+                <td th:text="${mark.semester}">Semester</td>
+                <td class="avg-marks">--</td>
+                <td class="gpa-marks">--</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="mt-4">
+        <a href="/student/dashboard" class="btn btn-secondary"><i class="fas fa-arrow-left me-1"></i> Back to Dashboard</a>
+        <button class="btn btn-primary" onclick="window.print()"><i class="fas fa-print me-1"></i> Print Report</button>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+	function fetchAllAverages() {
+	    const rows = document.querySelectorAll('tr[data-student-id]');
+	    rows.forEach(row => {
+	        const studentId = row.getAttribute('data-student-id');
+	        const semester = row.getAttribute('data-semester');
+
+	        fetch(`/student/marks/average/${semester}?studentId=${studentId}`)
+	            .then(response => response.json())
+	            .then(avg => {
+	                row.querySelector('.avg-marks').innerText =
+	                    (avg !== null && !isNaN(avg)) ? avg.toFixed(2) : '--';
+	            })
+	            .catch(err => console.log('Error fetching average: ' + err));
+	    });
+	}
+
+	function fetchAllGPA() {
+	    const rows = document.querySelectorAll('tr[data-student-id]');
+	    rows.forEach(row => {
+	        const studentId = row.getAttribute('data-student-id');
+	        const semester = row.getAttribute('data-semester');
+
+	        fetch(`/student/marks/gpa/${semester}?studentId=${studentId}`)
+	            .then(response => response.json())
+	            .then(gpa => {
+	                row.querySelector('.gpa-marks').innerText =
+	                    (gpa !== null && !isNaN(gpa)) ? gpa.toFixed(2) : '--';
+	            })
+	            .catch(err => console.log('Error fetching GPA: ' + err));
+	    });
+	}
+</script>
+
+</body>
+</html>

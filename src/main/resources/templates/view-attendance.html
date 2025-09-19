@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>View Attendance</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(to right, #cce7ff, #f0f8ff);
+            margin: 0;
+            padding: 30px 20px;
+        }
+
+        .container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        .message {
+            text-align: center;
+            color: #28a745;
+            font-weight: 600;
+            margin-bottom: 25px;
+            font-size: 16px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            flex-grow: 1;
+            text-align: center;
+            margin: 0;
+            color: #0d6efd;
+            font-weight: 700;
+            font-size: 26px;
+        }
+
+        .btn {
+            padding: 6px 14px;
+            font-size: 13px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back {
+            background-color: #17a2b8;
+            color: #fff;
+        }
+        .btn-back:hover {
+            background-color: #117a8b;
+        }
+
+        .btn-dashboard {
+            background-color: #6c757d;
+            color: #fff;
+        }
+        .btn-dashboard:hover {
+            background-color: #565e64;
+        }
+
+        /* Top form styling */
+        .form-top {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .form-top form {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .form-top select,
+        .form-top button {
+            height: 45px;
+            padding: 0 15px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .form-top select {
+            min-width: 220px;
+        }
+
+        .form-top button {
+            border: none;
+            cursor: pointer;
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        button.view-student {
+            background: linear-gradient(90deg, #0d6efd, #0062cc);
+        }
+        button.view-student:hover {
+            background: linear-gradient(90deg, #0062cc, #004a99);
+        }
+
+        button.view-all {
+            background: linear-gradient(90deg, #28a745, #218838);
+        }
+        button.view-all:hover {
+            background: linear-gradient(90deg, #218838, #1e7e34);
+        }
+
+        /* Table */
+        .table-wrapper {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        thead {
+            background-color: #0d6efd;
+            color: white;
+        }
+
+        table th, table td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        table th.action-col, 
+        table td.action-col {
+            width: 180px; 
+            white-space: nowrap;
+        }
+
+        tbody tr {
+            background-color: #f8f9fa;
+        }
+
+        tbody tr:hover {
+            background-color: #e2e6ea;
+        }
+
+        .present {
+            color: green;
+            font-weight: bold;
+        }
+
+        .absent {
+            color: red;
+            font-weight: bold;
+        }
+
+        .status-button {
+            display: inline-block;
+            padding: 8px 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            color: #fff;
+            font-size: 13px;
+            text-decoration: none;
+        }
+
+        .mark-present {
+            background-color: #28a745;
+        }
+
+        .mark-absent {
+            background-color: #dc3545;
+        }
+
+        .status-button:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- Header with back, title, dashboard -->
+	<div class="header">
+	    <!-- Back button only for admin -->
+	    <a th:if="${role == 'admin'}" 
+	       th:href="@{/admin/dashboard/attendance/attendance-management}" 
+	       class="btn btn-back">⬅ Back</a>
+
+	    <h1>View Attendance</h1>
+
+	    <!-- Dashboard link for admin or student -->
+	    <a th:if="${role == 'admin'}" th:href="@{/admin/dashboard}" class="btn btn-dashboard">⬅ Dashboard</a>
+	    <a th:if="${role == 'student'}" th:href="@{/student/dashboard}" class="btn btn-dashboard">⬅ Dashboard</a>
+	</div>
+
+
+    <!-- Success message -->
+    <div th:if="${successMessage}" class="message" th:text="${successMessage}"></div>
+
+    <!-- Top Form -->
+    <div th:if="${role == 'admin'}" class="form-top">
+        <form th:action="@{/admin/dashboard/attendance/view-attendance}" method="get">
+            <select name="studentId">
+                <option value="">-- Select Student --</option>
+                <option th:each="s : ${students}"
+                        th:value="${s.studentId}"
+                        th:text="${s.firstName + ' ' + s.lastName}">
+                </option>
+            </select>
+            <button type="submit" class="view-student">View Student</button>
+        </form>
+
+        <form th:action="@{/admin/dashboard/attendance/view-attendance}" method="get">
+            <input type="hidden" name="studentId" value="0"/>
+            <button type="submit" class="view-all">View All Students</button>
+        </form>
+    </div>
+
+    <!-- Attendance Table -->
+    <div class="table-wrapper" th:if="${attendanceList}">
+        <table>
+            <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Subject</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th th:if="${role=='admin'}" class="action-col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="record : ${attendanceList}">
+                    <td th:text="${record.studentName}"></td>
+                    <td th:text="${record.subjectName}"></td>
+                    <td th:text="${record.date}"></td>
+                    <td>
+                        <span th:text="${record.present} ? '✅ Present' : '❌ Absent'"
+                              th:class="${record.present} ? 'present' : 'absent'"></span>
+                    </td>
+                    <td th:if="${role=='admin'}" class="action-col">
+                        <a th:href="@{/admin/dashboard/attendance/view-attendance(
+                                        toggleStudentId=${record.studentId}, 
+                                        toggleSubjectId=${record.subjectId}, 
+                                        toggleDate=${record.date}, 
+                                        togglePresent=${!record.present}, 
+                                        studentId=${param.studentId})}"
+                           th:text="${record.present} ? 'Mark Absent' : 'Mark Present'"
+                           th:class="${record.present} ? 'status-button mark-absent' : 'status-button mark-present'">
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+</body>
+</html>

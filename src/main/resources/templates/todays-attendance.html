@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Today's Attendance</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(to right, #cce7ff, #f0f8ff);
+            margin: 0;
+            padding: 30px 20px;
+        }
+
+        .container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        /* Header: same as Attendance Management */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            flex-grow: 1;
+            text-align: center;
+            margin: 0;
+            color: #0d6efd;
+            font-weight: 700;
+            font-size: 26px;
+        }
+
+        .btn {
+            padding: 6px 14px;
+            font-size: 13px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-dashboard {
+            background-color: #6c757d;
+            color: #fff;
+        }
+        .btn-dashboard:hover {
+            background-color: #565e64;
+        }
+
+        /* Date selector form */
+        form.date-form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        form.date-form label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        form.date-form input[type="date"] {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        form.date-form button {
+            padding: 10px 18px;
+            border-radius: 8px;
+            border: none;
+            background: linear-gradient(90deg, #28a745, #218838);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        form.date-form button:hover {
+            background: linear-gradient(90deg, #218838, #1e7e34);
+            transform: scale(1.05);
+        }
+
+        /* Table styling */
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        thead {
+            background-color: #0d6efd;
+            color: white;
+        }
+
+        table th, table td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        tbody tr {
+            background-color: #f8f9fa;
+        }
+
+        tbody tr:hover {
+            background-color: #e2e6ea;
+        }
+
+        .present {
+            color: green;
+            font-weight: bold;
+        }
+
+        .absent {
+            color: red;
+            font-weight: bold;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <!-- Header + Dashboard button (same as Attendance Management) -->
+    <div class="header">
+        
+        <h1>Today's Attendance</h1>
+		<a href="/admin/dashboard" class="btn btn-dashboard">⬅ Dashboard</a>
+        <div></div> <!-- empty div to balance flex spacing -->
+    </div>
+
+    <!-- Date Selector -->
+    <form class="date-form" th:action="@{/admin/dashboard/attendance/todays-attendance}" method="get">
+        <label for="date">Select Date:</label>
+        <input type="date" id="date" name="date"
+               th:value="${selectedDate != null} ? ${selectedDate} : ${#dates.format(T(java.time.LocalDate).now(), 'yyyy-MM-dd')}"/>
+        <button type="submit">View</button>
+    </form>
+
+    <!-- Attendance Table -->
+    <div class="table-wrapper">
+        <table>
+            <thead>
+            <tr>
+                <th>Student</th>
+                <th>Subject</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="attendance : ${attendanceList}">
+                <td th:text="${attendance.studentName}">Student Name</td>
+                <td th:text="${attendance.subjectName}">Subject Name</td>
+                <td>
+                    <span th:text="${attendance.present} ? '✅ Present' : '❌ Absent'"
+                          th:class="${attendance.present} ? 'present' : 'absent'"></span>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(attendanceList)}">
+                <td colspan="3" class="text-center">No attendance records for this day.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+</body>
+</html>

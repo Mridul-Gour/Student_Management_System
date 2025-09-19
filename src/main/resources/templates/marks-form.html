@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${marks.marksId != null} ? 'Edit Marks' : 'Add Marks'"></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        body {
+            background: linear-gradient(135deg, #f6f9fc, #e9f1f7);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .container { margin-top: 50px; }
+        .card {
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        .card-header {
+            background: linear-gradient(90deg, #20c997, #198754);
+            border-radius: 20px 20px 0 0;
+            color: white;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.5rem;
+        }
+        .form-label { font-weight: 500; color: #4b4b4b; }
+        .form-control:focus { border-color: #20c997; box-shadow: 0 0 5px rgba(32, 201, 151, 0.5); }
+        .btn-submit { background: #ff6f61; color: white; font-weight: 500; width: 100%; }
+        .btn-submit:hover { background: #e35b50; }
+        .btn-back { background: #6c757d; color: white; font-weight: 500; }
+        .btn-back:hover { background: #5a6268; }
+        .fieldError { color: red; font-size: 0.9rem; }
+        .errorMessage { color: white; background-color: #dc3545; padding: 10px; border-radius: 5px; margin-bottom: 15px; text-align: center; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="card shadow-lg rounded-4">
+        <div class="card-header" th:text="${marks.marksId != null} ? 'Edit Marks' : 'Add Marks'"></div>
+        <div class="card-body">
+
+            <!-- Display controller error messages here -->
+            <div th:if="${errorMessage}" class="errorMessage" th:text="${errorMessage}"></div>
+
+            <form th:action="@{${marks.marksId} != null ? '/admin/marks/update/' + ${marks.marksId} : '/admin/marks/add'}"
+                  th:object="${marks}" method="post">
+
+                <!-- Student -->
+                <div class="mb-3">
+                    <label class="form-label">Student</label>
+                    <select th:field="*{studentId}" class="form-control" required th:errorclass="fieldError">
+                        <option value="">-- Select Student --</option>
+                        <option th:each="s : ${students}" th:value="${s.studentId}"
+                                th:text="${s.firstName + ' ' + s.lastName}"></option>
+                    </select>
+                    <p class="fieldError" th:if="${#fields.hasErrors('studentId')}" th:errors="*{studentId}"></p>
+                </div>
+
+                <!-- Course -->
+                <div class="mb-3">
+                    <label class="form-label">Course</label>
+                    <select th:field="*{courseId}" class="form-control" required th:errorclass="fieldError">
+                        <option value="">-- Select Course --</option>
+                        <option th:each="c : ${courses}" th:value="${c.id}" th:text="${c.courseName}"></option>
+                    </select>
+                    <p class="fieldError" th:if="${#fields.hasErrors('courseId')}" th:errors="*{courseId}"></p>
+                </div>
+
+                <!-- Subject -->
+                <div class="mb-3">
+                    <label class="form-label">Subject</label>
+                    <select th:field="*{subjectId}" class="form-control" required th:errorclass="fieldError">
+                        <option value="">-- Select Subject --</option>
+                        <option th:each="sub : ${subjects}" th:value="${sub.id}" th:text="${sub.subjectName}"></option>
+                    </select>
+                    <p class="fieldError" th:if="${#fields.hasErrors('subjectId')}" th:errors="*{subjectId}"></p>
+                </div>
+
+				<!-- Exam Type -->
+				<div class="mb-3">
+				    <label for="examType" class="form-label">Exam Type</label>
+				    <select id="examType" th:field="*{examType}" class="form-control" th:errorclass="fieldError">
+				        <option value="">-- Select Exam Type --</option>
+				        <option value="Midterm">Mid-Semester</option>
+				        <option value="Final">Final</option>
+				    </select>
+				    <p class="fieldError" th:if="${#fields.hasErrors('examType')}" th:errors="*{examType}"></p>
+				</div>
+
+
+                <!-- Marks Obtained -->
+                <div class="mb-3">
+                    <label class="form-label">Marks Obtained</label>
+                    <input type="number" th:field="*{marksObtained}" class="form-control" placeholder="Enter marks"
+                           min="0" max="100" required th:errorclass="fieldError">
+                    <p class="fieldError" th:if="${#fields.hasErrors('marksObtained')}" th:errors="*{marksObtained}"></p>
+                </div>
+
+                <!-- Semester -->
+                <div class="mb-3">
+                    <label class="form-label">Semester</label>
+                    <input type="text" th:field="*{semester}" class="form-control" placeholder="Enter semester" required th:errorclass="fieldError">
+                    <p class="fieldError" th:if="${#fields.hasErrors('semester')}" th:errors="*{semester}"></p>
+                </div>
+
+                <!-- Buttons -->
+                <div class="d-grid gap-2 mt-4">
+                    <button type="submit" class="btn btn-submit" th:text="${marks.marksId != null} ? 'Update Marks' : 'Add Marks'"></button>
+                    <a th:href="@{/admin/marks/view}" class="btn btn-back">Back to Grades</a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

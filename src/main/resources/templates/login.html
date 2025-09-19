@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login - Student Management System</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+
+  <style>
+    body {
+      min-height: 100vh;
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #dbeafe, #bfdbfe); /* bluish gradient */
+    }
+
+    .container-box {
+      display: flex;
+      width: 90%;
+      max-width: 1000px;
+      background: #ffffff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Left Info */
+    .info-section {
+      flex: 1;
+      background: linear-gradient(to right, #1e3c72, #2a5298);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 3rem;
+    }
+
+    .info-section h2 {
+      font-size: 2rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .info-section p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    /* Right Login form */
+    .form-section {
+      flex: 1;
+      padding: 3rem;
+      background: #f8fafc;
+    }
+
+    .form-section h3 {
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      font-size: 1.6rem;
+      color: #2a5298;
+      text-align: center;
+    }
+
+    .form-label {
+      font-weight: 500;
+      color: #333;
+    }
+
+    .form-control {
+      border-radius: 8px;
+      padding: 0.8rem;
+      border: 1px solid #ccc;
+      transition: all 0.2s;
+    }
+
+    .form-control:focus {
+      border-color: #2a5298;
+      box-shadow: 0 0 6px rgba(42, 82, 152, 0.3);
+    }
+
+    .btn-primary {
+      background: #2a5298;
+      border: none;
+      padding: 0.8rem;
+      font-weight: 500;
+      border-radius: 8px;
+      width: 100%;
+      transition: all 0.3s;
+    }
+
+    .btn-primary:hover {
+      background: #1e3c72;
+    }
+
+    p {
+      margin-top: 1.2rem;
+      text-align: center;
+    }
+
+    p a {
+      color: #2a5298;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    p a:hover {
+      text-decoration: underline;
+    }
+
+    .alert {
+      border-radius: 8px;
+      padding: 0.7rem 1rem;
+      margin-bottom: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      .container-box { flex-direction: column; }
+      .info-section { padding: 2rem; text-align: center; }
+      .form-section { padding: 2rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container-box">
+    <!-- Left Info -->
+    <div class="info-section">
+      <h2>Welcome to Student Management System</h2>
+      <p>Manage students, courses, and marks efficiently.<br> Please log in to continue.</p>
+    </div>
+
+    <!-- Right Login -->
+    <div class="form-section">
+      <h3><i class="fa-solid fa-right-to-bracket"></i> Login</h3>
+
+      <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+      <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+
+      <form th:action="@{/login}" method="post">
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <input type="text" name="username" class="form-control" placeholder="Enter your email" required/>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Password</label>
+          <input type="password" name="password" class="form-control" placeholder="Enter your password" required/>
+        </div>
+        <button type="submit" class="btn btn-primary mt-2">Login</button>
+      </form>
+
+      <p>Don't have an account? <a th:href="@{/register}">Register</a></p>
+    </div>
+  </div>
+</body>
+</html>

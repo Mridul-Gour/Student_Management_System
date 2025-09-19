@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Attendance Management</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(to right, #cce7ff, #f0f8ff);
+            margin: 0;
+            padding: 30px 20px;
+        }
+
+        .container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        /* ✅ Header same as View Attendance */
+        .header-row {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .header-row h1 {
+            text-align: center;
+            margin: 0;
+            color: #0d6efd;
+            font-weight: 700;
+            font-size: 28px;
+        }
+
+        .header-row a {
+            font-size: 14px;
+            color: #0d6efd;
+            font-weight: 500;
+            text-decoration: none;
+            justify-self: end;
+            transition: all 0.3s ease;
+        }
+
+        .header-row a:hover {
+            color: #004a99;
+            text-decoration: underline;
+        }
+
+        /* ✅ Buttons Row (centered like view attendance) */
+        .actions-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .actions-row select {
+            min-width: 220px;
+            height: 45px;
+            padding: 0 15px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .actions-row a {
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+		.header-row a.btn-dashboard {
+		    background-color: #6c757d; /* grey */
+		    color: #fff;               /* white text */
+		    padding: 6px 14px;
+		    border-radius: 6px;
+		    text-decoration: none;
+		    font-weight: 500;
+		    text-align: center;
+		    transition: all 0.3s ease;
+		}
+
+		.header-row a.btn-dashboard:hover {
+		    background-color: #565e64; /* darker grey on hover */
+		    color: #fff;               /* keep text white */
+		}
+
+        .btn-mark {
+            background: linear-gradient(90deg, #ff9800, #f57c00);
+        }
+        .btn-mark:hover {
+            background: linear-gradient(90deg, #f57c00, #e65100);
+        }
+
+        .btn-update {
+            background: linear-gradient(90deg, #6f42c1, #5a32a3);
+        }
+        .btn-update:hover {
+            background: linear-gradient(90deg, #5a32a3, #45217a);
+        }
+
+        .btn-view {
+            background: linear-gradient(90deg, #17a2b8, #117a8b);
+        }
+        .btn-view:hover {
+            background: linear-gradient(90deg, #117a8b, #0d5d69);
+        }
+
+        .btn-reset {
+            background: linear-gradient(90deg, #6c757d, #565e64);
+        }
+        .btn-reset:hover {
+            background: linear-gradient(90deg, #565e64, #343a40);
+        }
+
+        /* ✅ Table styling similar to View Attendance */
+        .table-wrapper {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        thead {
+            background-color: #0d6efd;
+            color: white;
+        }
+
+        table th, table td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        table th.action-col, 
+        table td.action-col {
+            width: 180px;
+            white-space: nowrap;
+        }
+
+        tbody tr {
+            background-color: #f8f9fa;
+        }
+
+        tbody tr:hover {
+            background-color: #e2e6ea;
+        }
+
+        .text-success {
+            color: green;
+            font-weight: bold;
+        }
+
+        .text-danger {
+            color: red;
+            font-weight: bold;
+        }
+
+        /* ✅ Toggle button look */
+        .toggle-btn {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 500;
+            color: #fff;
+            text-decoration: none;
+            font-size: 13px;
+            background-color: #0d6efd;
+            transition: all 0.2s ease;
+        }
+
+        .toggle-btn:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- ✅ Header (same as View Attendance) -->
+    <div class="header-row">
+        <div></div>
+        <h1>Attendance Management</h1>
+		<a href="/admin/dashboard" class="btn-dashboard">⬅ Dashboard</a>
+
+    </div>
+
+    <!-- ✅ Buttons + Dropdown Row -->
+    <div class="actions-row">
+        <form method="get" action="/admin/dashboard/attendance/attendance-management">
+            <select name="studentId" onchange="this.form.submit()">
+                <option value="">-- Select Student --</option>
+                <th:block th:each="s : ${students}">
+                    <option th:value="${s.studentId}"
+                            th:selected="${selectedStudentId != null and selectedStudentId == s.studentId}"
+                            th:text="${s.firstName + ' ' + s.lastName}">
+                    </option>
+                </th:block>
+            </select>
+        </form>
+
+        <a href="/admin/dashboard/attendance/mark-attendance" class="btn-mark">Mark Attendance</a>
+        <a href="/admin/dashboard/attendance/update-attendance" class="btn-update">Update Attendance</a>
+        <a href="/admin/dashboard/attendance/view-attendance" class="btn-view">View Attendance</a>
+        <a href="/admin/dashboard/attendance/attendance-management?reset=true" class="btn-reset">Reset</a>
+    </div>
+
+    <!-- ✅ Attendance Table -->
+    <div class="table-wrapper">
+        <table>
+            <thead>
+            <tr>
+                <th>Student</th>
+                <th>Subject</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th class="action-col">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="attendance : ${attendanceList}">
+                <td th:text="${attendance.studentName}"></td>
+                <td th:text="${attendance.subjectName}"></td>
+                <td th:text="${attendance.date}"></td>
+
+                <td>
+                    <span th:text="${attendance.present ? 'Present' : 'Absent'}"
+                          th:classappend="${attendance.present} ? 'text-success' : 'text-danger'"></span>
+                </td>
+
+                <td class="action-col">
+                    <a th:href="@{/admin/dashboard/attendance/attendance-management(
+                            studentId=${selectedStudentId},
+                            toggleStudentId=${attendance.studentId},
+                            toggleSubjectId=${attendance.subjectId},
+                            toggleDate=${attendance.date},
+                            togglePresent=${!attendance.present})}"
+                       class="toggle-btn">
+                       <span th:text="${attendance.present ? 'Mark Absent' : 'Mark Present'}"></span>
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Student List</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background: #f8f9fa; }
+        .card { border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .table thead { background: #0062E6; color: #fff; }
+
+        /* Center wrapper */
+        .search-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        /* Input group with underline */
+        .search-group {
+            display: flex;
+            align-items: center;
+            border-bottom: 3px solid #0062E6;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        /* Input field */
+        .search-box {
+            border: none;
+            outline: none;
+            padding: 10px 6px;
+            font-size: 18px;
+            flex: 1;
+            background: transparent;
+            color: #212529;
+        }
+        .search-box:focus {
+            outline: none;
+        }
+        .search-box::placeholder {
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        /* Search + reset buttons inline */
+        .search-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Search icon */
+        .search-icon {
+            font-size: 20px;
+            color: #0062E6;
+            padding: 0 8px;
+            cursor: pointer;
+        }
+        
+        .table .btn-sm {
+		    padding: 2px 8px;   
+		    font-size: 12px;    
+		    line-height: 2.0;   
+		    border-radius: 6px; 
+		}
+        
+        /* message */
+        .toast-alert {
+		    position: fixed;
+		    top: 20px;
+		    right: 20px;
+		    padding: 14px 20px;
+		    border-radius: 8px;
+		    font-size: 15px;
+		    font-weight: 500;
+		    color: #fff;
+		    box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+		    
+		    /* Transition */
+		    opacity: 0;
+		    transform: translateY(-20px);
+		    transition: opacity 0.5s ease, transform 0.5s ease;
+		}
+		
+		/* dynamically to show the toast */
+		.toast-alert.show {
+		    opacity: 1;
+		    transform: translateY(0);
+		}
+		
+		.toast-success { background: #28a745; }  /* #0062E6 primary color */
+		.toast-danger { background: #d93025; }
+		.toast-warning { background: #f9a825; }
+		.toast-info { background: #1a73e8; }
+    </style>
+</head>
+<body>
+<div class="container mt-4">  
+    
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>👨‍🎓 Student List</h2>
+        <div>
+            <a th:href="@{/admin/dashboard}" class="btn rounded-pill px-3 me-3 ">
+                ⬅ Back
+            </a>
+            <a th:href="@{/admin/student/add}" class="btn btn-primary">+ Add Student</a>
+        </div>
+    </div>
+
+    <!-- Success Message -->
+    <div th:if="${message}" class="toast-alert toast-success" role="alert">
+        <span th:text="${message}"></span>
+    </div>
+
+    <!-- Search Form -->
+    <form th:action="@{/admin/student/search}" method="get">
+        <div class="search-wrapper">
+            <div class="search-group">
+                <input type="text" class="search-box" name="keyword"
+                       placeholder="Search by name, email, or year..."
+                       th:value="${keyword}">
+                <span class="search-icon">🔍</span>
+            </div>
+            <div class="search-actions ms-3">
+                <button class="btn btn-outline-primary" type="submit">Search</button>
+                <a th:href="@{/admin/student/all}" class="btn btn-outline-secondary">Reset</a>
+            </div>
+        </div>
+    </form>
+
+    <!-- Student Table -->
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-bordered table-hover align-middle">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Year</th>
+                    <th>Subjects</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="stud : ${students}">
+                    <td th:text="${stud.studentId}"></td>
+                    <td th:text="${stud.firstName + ' ' + stud.lastName}"></td>
+                    <td th:text="${stud.email}"></td>
+                    <td th:text="${stud.year}"></td>
+                    <td>
+                        <span th:if="${stud.subjects != null}" 
+                              th:each="sub, iterStat : ${stud.subjects}" 
+                              th:text="${sub.subjectName + (iterStat.last ? '' : ', ')}"></span>
+                        <span th:if="${stud.subjects == null or #lists.isEmpty(stud.subjects)}">N/A</span>
+                    </td>
+                    <td>
+                        <a th:href="@{'/admin/student/profile/' + ${stud.studentId}}" class="btn btn-info btn-sm">👁 View</a>
+                        <a th:href="@{'/admin/student/update/' + ${stud.studentId}}" class="btn btn-warning btn-sm">✏ Edit</a>
+                        <a th:href="@{'/admin/student/delete/' + ${stud.studentId}}" class="btn btn-danger btn-sm">🗑 Delete</a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(students)}">
+				    <td colspan="6" class="text-center py-4">
+				        <div class="text-muted fs-5">
+				            <span>🚫 No students found</span>
+				        </div>
+				    </td>
+				</tr>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+	const toast = document.querySelector(".toast-alert");
+	if (toast) {
+	    toast.classList.add("show");
+	
+	    setTimeout(() => {
+	        toast.classList.remove("show");
+	        setTimeout(() => toast.remove(), 500);
+	    }, 5000);
+	}
+</script>
+
+</body>
+</html>

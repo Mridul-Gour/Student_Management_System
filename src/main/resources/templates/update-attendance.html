@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Update Attendance</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: linear-gradient(to right, #e0f7fa, #f0f8ff); margin: 0; padding: 40px; }
+        .container { background: #fff; padding: 25px; border-radius: 15px; max-width: 700px; margin: auto; box-shadow: 0 8px 25px rgba(0,0,0,0.1);}
+        
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        h1 { flex: 1; text-align: center; color: #0d6efd; margin: 0; }
+
+        .btn { padding: 8px 16px; border-radius: 6px; font-weight: 500; text-decoration: none; color: white; font-size: 13px; transition: background 0.3s; }
+
+        .btn-back { background-color: #009688; }
+        .btn-back:hover { background-color: #00796b; }
+
+        .btn-dashboard { background-color: #6c757d; }
+        .btn-dashboard:hover { background-color: #5a6268; }
+
+        .btn-view { background-color: #0d6efd; }
+        .btn-view:hover { background-color: #0b5ed7; }
+
+        .top-right { display: flex; justify-content: flex-end; margin-bottom: 30px; }
+
+        label { display: block; margin-top: 15px; font-weight: bold; }
+        select, input[type="date"], button { width: 100%; padding: 10px; margin-top: 8px; border: 1px solid #ccc; border-radius: 8px; font-size: 14px;}
+        button { background: #0d6efd; color: #fff; font-weight: bold; cursor: pointer; margin-top: 20px;}
+        button:hover { background: #004a99; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 10px; text-align: center; }
+        thead { background: #0d6efd; color: #fff; }
+        .status { font-size: 20px; }
+		.message { text-align: center; font-weight: 600; font-size: 15px; margin: 10px 0 20px 0; color: #28a745;  /* Green */
+		}
+
+    </style>
+	
+</head>
+<body>
+<div class="container">
+
+    <!-- Header -->
+    <div class="header">
+        <a th:href="@{/admin/dashboard/attendance/attendance-management}" class="btn btn-back">⬅ Back</a>
+        <h1>Update Attendance</h1>
+        <a th:href="@{/admin/dashboard}" class="btn btn-dashboard">⬅ Dashboard</a>
+    </div>
+
+    <!-- View Attendance Button (Right Corner Next Line) -->
+    <div class="top-right">
+        <a th:href="@{/admin/dashboard/attendance/view-attendance}" class="btn btn-view">👁 View Attendance</a>
+    </div>
+
+    <!-- Success Message -->
+    <div th:if="${successMessage}" class="message" th:text="${successMessage}"></div>
+
+    <!-- Step 1: Select Course -->
+    <form method="get" th:action="@{/admin/dashboard/attendance/update-attendance}">
+        <label for="courseId">Select Course:</label>
+        <select name="courseId" id="courseId" required onchange="this.form.submit()">
+            <option value="">-- Select Course --</option>
+            <option th:each="course : ${courses}"
+                    th:value="${course.id}"
+                    th:text="${course.courseName}"
+                    th:selected="${course.id} == ${selectedCourseId}">
+            </option>
+        </select>
+    </form>
+
+    <!-- Step 2: Select Subject -->
+    <form method="get" th:if="${selectedCourseId != null}"
+          th:action="@{/admin/dashboard/attendance/update-attendance}">
+        <input type="hidden" name="courseId" th:value="${selectedCourseId}"/>
+        <label for="subjectId">Select Subject:</label>
+        <select name="subjectId" id="subjectId" required onchange="this.form.submit()">
+            <option value="">-- Select Subject --</option>
+            <option th:each="subj : ${subjects}"
+                    th:value="${subj.id}"
+                    th:text="${subj.subjectName}"
+                    th:selected="${subj.id} == ${selectedSubjectId}">
+            </option>
+        </select>
+    </form>
+
+    <!-- Step 3: Select Student -->
+    <form method="get" th:if="${selectedCourseId != null and selectedSubjectId != null}"
+          th:action="@{/admin/dashboard/attendance/update-attendance}">
+        <input type="hidden" name="courseId" th:value="${selectedCourseId}"/>
+        <input type="hidden" name="subjectId" th:value="${selectedSubjectId}"/>
+        <label for="studentId">Select Student:</label>
+        <select name="studentId" id="studentId" required onchange="this.form.submit()">
+            <option value="">-- Select Student --</option>
+            <option th:each="student : ${students}"
+                    th:value="${student.studentId}"
+                    th:text="${student.firstName + ' ' + student.lastName}"
+                    th:selected="${student.studentId} == ${selectedStudentId}">
+            </option>
+        </select>
+    </form>
+
+    <!-- Step 4: Update Attendance -->
+    <form th:if="${selectedCourseId != null and selectedSubjectId != null and selectedStudentId != null}"
+          th:action="@{/admin/dashboard/attendance/update-attendance}" method="post">
+        <input type="hidden" name="courseId" th:value="${selectedCourseId}"/>
+        <input type="hidden" name="subjectId" th:value="${selectedSubjectId}"/>
+        <input type="hidden" name="studentId" th:value="${selectedStudentId}"/>
+
+        <label for="date">Select Date:</label>
+        <input type="date" id="date" name="date" required/>
+
+        <table>
+            <thead>
+            <tr>
+                <th>Present</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    <input type="hidden" name="present" value="false"/>
+                    <input type="checkbox" name="present" value="true" class="present-checkbox"/> Present
+                </td>
+                <td class="status">❌</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <button type="submit">Update Attendance</button>
+    </form>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            document.querySelectorAll('.present-checkbox').forEach(cb => {
+                cb.addEventListener('change', function() {
+                    const statusCell = this.closest('tr').querySelector('.status');
+                    statusCell.textContent = this.checked ? '✅' : '❌';
+                });
+            });
+        });
+    </script>
+</div>
+</body>
+</html>

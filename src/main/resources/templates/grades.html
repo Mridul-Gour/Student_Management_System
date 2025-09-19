@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Performance - Marks</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f6f8; font-family: 'Segoe UI', sans-serif; }
+        .container { margin-top: 60px; }
+        h2 { color: #343a40; margin-bottom: 25px; font-weight: 600; }
+        table { background-color: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        th { background-color: #007bff; color: white; text-align: center; }
+        td { vertical-align: middle; text-align: center; }
+        .btn-add { background-color: #20c997; color: #fff; font-weight: 500; }
+        .btn-add:hover { background-color: #17a589; }
+        .btn-delete { background-color: #dc3545; color: #fff; }
+        .btn-delete:hover { background-color: #c82333; }
+        .btn-average, .btn-gpa { background-color: #ffc107; color: #fff; font-weight: 500; }
+        .btn-average:hover, .btn-gpa:hover { background-color: #e0a800; }
+        .filter-section { margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Academic Performance - Marks</h2>
+
+    <!-- Filter Section -->
+    <div class="filter-section d-flex flex-wrap gap-2 align-items-center">
+        <a th:href="@{/admin/marks/add}" class="btn btn-add"><i class="fas fa-plus me-1"></i> Add Marks</a>
+
+        <label for="studentFilter" class="mb-0">Filter by Student:</label>
+        <select id="studentFilter" class="form-select w-auto">
+            <option value="">-- All Students --</option>
+            <option th:each="s : ${students}" th:value="${s.studentId}" th:text="${s.firstName + ' ' + s.lastName}"></option>
+        </select>
+        <button class="btn btn-secondary" onclick="applyStudentFilter()">Apply Filter</button>
+
+        <button class="btn btn-average" onclick="fetchAllAverages()"><i class="fas fa-calculator me-1"></i> Fetch All Averages</button>
+        <button class="btn btn-gpa" onclick="fetchAllGPA()"><i class="fas fa-graduation-cap me-1"></i> Fetch All GPA</button>
+    </div>
+
+    <!-- Marks Table -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Student ID</th>
+                    <th>Student</th>
+                    <th>Subject</th>
+                    <th>Exam Type</th>
+                    <th>Marks Obtained</th>
+                    <th>Semester</th>
+                    <th>Average Marks</th>
+                    <th>GPA</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="mark : ${marksList}" th:data-student-id="${mark.studentId}" th:data-semester="${mark.semester}">
+                    <td th:text="${mark.studentId}">ID</td>
+                    <td th:text="${mark.studentName}">Student Name</td>
+                    <td th:text="${mark.subjectName}">Subject Name</td>
+                    <td th:text="${mark.examType}">Exam Type</td>
+                    <td th:text="${mark.marksObtained}">Marks</td>
+                    <td th:text="${mark.semester}">Semester</td>
+                    <td class="avg-marks">--</td>
+                    <td class="gpa-marks">--</td>
+                    <td class="text-nowrap">
+                        <a th:href="@{'/admin/marks/update/' + ${mark.marksId}}" class="btn btn-sm btn-warning me-1 mb-1">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <button class="btn btn-sm btn-average me-1 mb-1" 
+                                th:attr="data-student-id=${mark.studentId},data-semester=${mark.semester}" 
+                                onclick="fetchAverageMarks(this)">
+                            <i class="fas fa-calculator"></i>
+                        </button>
+                        <button class="btn btn-sm btn-gpa me-1 mb-1" 
+                                th:attr="data-student-id=${mark.studentId},data-semester=${mark.semester}" 
+                                onclick="fetchGPA(this)">
+                            <i class="fas fa-graduation-cap"></i>
+                        </button>
+                        <button class="btn btn-sm btn-delete mb-1" th:onclick="'deleteMarks(' + ${mark.marksId} + ')'">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="d-flex justify-content-between mt-4">
+        <a href="/admin/dashboard" class="btn btn-secondary"><i class="fas fa-arrow-left me-1"></i> Back to Dashboard</a>
+        <button class="btn btn-primary" onclick="window.print()"><i class="fas fa-print me-1"></i> Print Report</button>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function deleteMarks(marksId) {
+        if (!confirm('Are you sure you want to delete this marks record?')) return;
+        fetch(`/admin/marks/${marksId}`, { method: 'DELETE' })
+            .then(response => { if(response.ok) location.reload(); else return response.text().then(t=>{throw new Error(t||'Failed')}) })
+            .catch(err=>alert(err));
+    }
+
+    function fetchAverageMarks(button) {
+        const studentId = button.getAttribute('data-student-id');
+        const semester = button.getAttribute('data-semester');
+        const url = `/admin/marks/student/${encodeURIComponent(studentId)}/average?semester=${encodeURIComponent(semester)}`;
+        fetch(url).then(r=>r.json()).then(avg=>{
+            const row = button.closest('tr');
+            row.querySelector('.avg-marks').innerText = (avg!=null && !isNaN(avg)) ? Number(avg).toFixed(2) : '--';
+        }).catch(err=>console.error(err));
+    }
+
+    function fetchGPA(button) {
+        const studentId = button.getAttribute('data-student-id');
+        const semester = button.getAttribute('data-semester');
+        const url = `/admin/marks/student/${encodeURIComponent(studentId)}/gpa/${encodeURIComponent(semester)}`;
+        fetch(url).then(r=>r.json()).then(gpa=>{
+            const row = button.closest('tr');
+            row.querySelector('.gpa-marks').innerText = (gpa!=null && !isNaN(gpa)) ? Number(gpa).toFixed(2) : '--';
+        }).catch(err=>console.error(err));
+    }
+
+    function fetchAllAverages() {
+        document.querySelectorAll('tr[data-student-id]').forEach(row=>{
+            const studentId = row.getAttribute('data-student-id');
+            const semester = row.getAttribute('data-semester');
+            const url = `/admin/marks/student/${encodeURIComponent(studentId)}/average?semester=${encodeURIComponent(semester)}`;
+            fetch(url).then(r=>r.json()).then(avg=>{
+                row.querySelector('.avg-marks').innerText = (avg!=null && !isNaN(avg)) ? Number(avg).toFixed(2) : '--';
+            }).catch(err=>console.error(err));
+        });
+    }
+
+    function fetchAllGPA() {
+        document.querySelectorAll('tr[data-student-id]').forEach(row=>{
+            const studentId = row.getAttribute('data-student-id');
+            const semester = row.getAttribute('data-semester');
+            const url = `/admin/marks/student/${encodeURIComponent(studentId)}/gpa/${encodeURIComponent(semester)}`;
+            fetch(url).then(r=>r.json()).then(gpa=>{
+                row.querySelector('.gpa-marks').innerText = (gpa!=null && !isNaN(gpa)) ? Number(gpa).toFixed(2) : '--';
+            }).catch(err=>console.error(err));
+        });
+    }
+
+    // Student filter function
+    function applyStudentFilter() {
+        const selectedId = document.getElementById('studentFilter').value;
+        document.querySelectorAll('tbody tr[data-student-id]').forEach(row => {
+            row.style.display = (!selectedId || row.getAttribute('data-student-id') === selectedId) ? '' : 'none';
+        });
+    }
+</script>
+</body>
+</html>
