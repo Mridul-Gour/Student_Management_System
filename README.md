@@ -47,7 +47,7 @@ It supports two roles: **Admin** and **Student**, each with role-based access an
 Role-based dashboards:
 - **Admin Dashboard** → Statistics of system (counts, recent data)
 - **Student Dashboard** → Personal info, attendance %, GPA, enrolled courses  
-- Acts as the *home page after login*
+- Acts as the home page after login
 
 ---
 
@@ -60,10 +60,13 @@ Role-based dashboards:
 
 ---
 
-## 👥 Contributors
-**Team 6 – Student Management System Project**  
-- Peeyush Pandey(Team Leader)
-- Niharika Sahu
-- Mridul Gour
-- Latha Vangimalli
-- Lohith Gantla
+## ⚡ Getting Started
+
+### Prerequisites
+- JDK 17+
+- Maven
+- MySQL
+
+### Run the project
+```bash
+mvn spring-boot:run
