@@ -91,7 +91,7 @@ Role-based dashboards:
 <img width="599" height="872" alt="Screenshot 2025-09-13 212242" src="https://github.com/user-attachments/assets/fcb0d291-7db5-44ab-b4a4-dbf4819a7aed" />
 
 ### Student
-<img width="498" height="672" alt="Screenshot 2025-09-10 020844" src="https://github.com/user-attachments/assets/16fdbdfb-dad6-4d7a-9980-b544ea44e5bc" />
+<img width="765" height="816" alt="Screenshot 2025-09-13 001201" src="https://github.com/user-attachments/assets/9e901763-5002-42a3-b240-34482617850c" />
 
 
 ## Run the project
