@@ -67,6 +67,23 @@ Role-based dashboards:
 - Maven
 - MySQL
 
+---
+
+## Screenshots
+
+### Admin Dashboard
+<img width="1881" height="913" alt="Screenshot 2025-09-09 195008" src="https://github.com/user-attachments/assets/36993963-a1d1-4c96-be35-adce92883aff" />
+
+
+
+
+
+
+
+
+
+
+
 ### Run the project
 ```bash
 mvn spring-boot:run
