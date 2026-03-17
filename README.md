@@ -69,7 +69,7 @@ Role-based dashboards:
 
 ---
 
-## Screenshots
+## 📷 Screenshots
 
 ### Admin Dashboard
 <img width="1920" height="976" alt="Screenshot (1638)" src="https://github.com/user-attachments/assets/d863c269-59cf-43b3-b17a-4c63b1d4b3dd" />
