@@ -80,18 +80,18 @@ Role-based dashboards:
 <img width="1876" height="914" alt="Screenshot 2025-09-09 195021" src="https://github.com/user-attachments/assets/988078f4-4519-4cb4-9b39-4e2b97008173" />
 
 ### Academic Performance
-<img width="1876" height="914" alt="Screenshot 2025-09-09 195021" src="https://github.com/user-attachments/assets/a1667818-b709-4ec7-8c52-4a3afdd836bb" />
-<img width="1876" height="914" alt="Screenshot 2025-09-09 195021" src="https://github.com/user-attachments/assets/01e39b48-8d07-41cd-bef4-eacc0a877fb2" />
+<img width="1736" height="609" alt="Screenshot 2025-09-13 214140" src="https://github.com/user-attachments/assets/952228f9-9954-435b-bde9-f95c983af5f0" />
+<img width="1744" height="937" alt="Screenshot 2025-09-09 161227" src="https://github.com/user-attachments/assets/c6cfffef-c20e-4685-b56c-67fb0a851820" />
 
 ### Attendance
-<img width="1876" height="914" alt="Screenshot 2025-09-09 195021" src="https://github.com/user-attachments/assets/454eca9b-2458-4c31-9c35-483bb39ecdf8" />
-<img width="1876" height="914" alt="Screenshot 2025-09-09 195021" src="https://github.com/user-attachments/assets/e13056e3-2ecc-467c-86f3-b28a9eb7068c" />
+<img width="1337" height="659" alt="Screenshot 2025-09-16 003209" src="https://github.com/user-attachments/assets/7c6e8066-e7a8-4308-8f0c-ae444860c783" />
+<img width="1354" height="407" alt="Screenshot 2025-09-16 002853" src="https://github.com/user-attachments/assets/378d10a7-8a6c-4000-b53d-5b613c456ff1" />
 
 ### User
-<img width="599" height="872" alt="Screenshot 2025-09-13 212242" src="https://github.com/user-attachments/assets/1853a9c0-d634-40d0-ae5d-f96528daad88" />
+<img width="599" height="872" alt="Screenshot 2025-09-13 212242" src="https://github.com/user-attachments/assets/fcb0d291-7db5-44ab-b4a4-dbf4819a7aed" />
 
 ### Student
-<img width="599" height="872" alt="Screenshot 2025-09-13 212242" src="https://github.com/user-attachments/assets/94e7e98d-9d58-4ace-9d5f-03778a55344b" />
+<img width="498" height="672" alt="Screenshot 2025-09-10 020844" src="https://github.com/user-attachments/assets/16fdbdfb-dad6-4d7a-9980-b544ea44e5bc" />
 
 
 ## Run the project
